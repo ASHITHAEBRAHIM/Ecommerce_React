@@ -10,7 +10,6 @@ import useCartStore from '../cart';
 
 const CartPage: React.FC = () => {
   const { cartItems, removeFromCart, updateCartItemQuantity } = useCartStore();
-  const [selectedItemId, setSelectedItemId] = useState<number | undefined>(undefined);
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const deleteButtonSize = isMobile ? 16 : 24;
 
@@ -32,32 +31,16 @@ const CartPage: React.FC = () => {
     removeFromCart(itemId);
   };
 
-  const selectedCartItem = cartItems.find((item) => item.id === selectedItemId);
-  const calculateOrderSummary = (selectedItemId?: number) => {
-    const selectedCartItem = selectedItemId ? cartItems.find((item) => item.id === selectedItemId) : null;
-  
-    if (!selectedCartItem) {
-      return {
-        subtotal: 0,
-        discount: 0,
-        deliveryCharge: 15,
-        total: 15, // Assuming a base total with only delivery charge if no item is selected
-      };
-    }
-  
-    const subtotal = selectedCartItem.price * selectedCartItem.quantity;
+  const calculateOrderSummary = () => {
+    const subtotal = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
     const discount = subtotal * 0.2; // 20% discount
     const deliveryCharge = 15;
     const total = subtotal - discount + deliveryCharge;
-  
     return { subtotal, discount, deliveryCharge, total };
   };
 
-  const handleToggleSelection = (itemId: number) => {
-    setSelectedItemId((prevId) => (prevId === itemId ? prevId : itemId));
-  };
+  const orderSummary = calculateOrderSummary();
   
-  const orderSummary = calculateOrderSummary(selectedItemId);
   return (
     <div className='md:w-full w-[398px] mx-auto'>
         <Header/>
@@ -71,11 +54,7 @@ const CartPage: React.FC = () => {
         {cartItems.map((cartItem) => (
       <div
       key={cartItem.id}
-      className={`flex relative border md:w-[715px] w-[358px] mx-auto px-6 py-6 border-gray-400 md:ml-24 md:mt-11 mt-5 ${
-        selectedItemId === cartItem.id ? 'border-blue-500' : ''
-      }`}
-      onClick={() => handleToggleSelection(cartItem.id)}
-    >
+      className="flex relative border md:w-[715px] w-[358px] mx-auto px-6 py-6 border-gray-400 md:ml-24 md:mt-11 mt-5">
       <div><img className='md:h-[124px] md:w-[124px] w-[99px] h-[99px]' src={cartItem.image}/></div>
       <div className='pl-4'>
       <p className='md:text-xl text-base font-bold'>{cartItem.title}</p>
