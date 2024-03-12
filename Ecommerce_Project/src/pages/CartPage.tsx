@@ -31,14 +31,14 @@ const CartPage: React.FC = () => {
     removeFromCart(itemId);
   };
 
-  const calculateOrderSummary = () => {
+   const calculateOrderSummary = () => {
     const subtotal = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
-    const discount = subtotal * 0.2; // 20% discount
+    const discount = subtotal * 0.2;
     const deliveryCharge = 15;
     const total = subtotal - discount + deliveryCharge;
     return { subtotal, discount, deliveryCharge, total };
   };
-
+  
   const orderSummary = calculateOrderSummary();
   
   return (
