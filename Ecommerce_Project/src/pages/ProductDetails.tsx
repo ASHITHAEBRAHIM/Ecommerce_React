@@ -54,9 +54,15 @@ const ProductDetails = () => {
   const handleDecrement = () => {
     setQuantity((prevQuantity) => Math.max(prevQuantity - 1, 1));
   };
-  const handleAddToCart = () => {
+ const handleAddToCart = () => {
     if (!product) {
       console.error("Product is undefined");
+      return;
+    }
+    
+    const isProductInCart = cartItems.some((item) => item.id === product.id && item.color === selectedColor && item.size === selectedSize);
+    if (isProductInCart) {
+      navigate('/cart');
       return;
     }
     const cartItem = {
@@ -71,8 +77,6 @@ const ProductDetails = () => {
     addToCart(cartItem);
     navigate('/cart');
   };
-
-
   if (isLoading) {
     return <p>Loading...</p>;
   }
